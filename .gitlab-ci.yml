@@ -22,6 +22,7 @@ build-docker-image:
       --cache-copy-layers
       --cache-repo $IMAGE_NAME/cache
       --snapshot-mode=redo
+      --compressed-caching=false
       --use-new-run
   only:
     - main
