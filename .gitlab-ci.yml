@@ -1,0 +1,29 @@
+stages:
+  - build
+
+variables:
+  DOCKER_REGISTRY: $CI_REGISTRY
+  IMAGE_NAME: $CI_REGISTRY_IMAGE
+
+build-docker-image:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context $CI_PROJECT_DIR
+      --dockerfile $CI_PROJECT_DIR/Dockerfile
+      --destination $IMAGE_NAME:$CI_COMMIT_SHA
+      --destination $IMAGE_NAME:latest
+      --cache=true
+      --cache-ttl=24h
+      --cache-copy-layers
+      --cache-repo $IMAGE_NAME/cache
+      --snapshot-mode=redo
+      --use-new-run
+  only:
+    - main
