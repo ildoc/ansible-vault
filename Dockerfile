@@ -1,4 +1,4 @@
-FROM python:alpine3.21
+FROM python:3.13.3-slim
 
 # Aggiungi vault CLI
 RUN apt-get update && apt-get install -y curl unzip gnupg && \
