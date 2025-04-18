@@ -29,6 +29,6 @@ listener "tcp" {
 }
 
 template {
-  destination = "/dev/null"
+  destination = "/tmp/vault-agent-dummy.txt"
   contents    = "noop"
 }
