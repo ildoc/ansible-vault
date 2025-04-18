@@ -8,9 +8,10 @@ RUN apt-get update && apt-get install -y curl unzip gnupg && \
     apt-get clean
 
 # Installa Ansible
-RUN pip install --no-cache-dir ansible
+RUN pip install --no-cache-dir ansible hvac netaddr kubernetes openshift
 
 # Installa Ansible Collection per Vault
+RUN ansible-galaxy collection install kubernetes.core
 RUN ansible-galaxy collection install community.hashi_vault
 
 # Crea directory e copia entrypoint
