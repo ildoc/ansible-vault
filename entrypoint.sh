@@ -17,4 +17,6 @@ while [ ! -f /tmp/vault-token ]; do sleep 0.5; done
 export VAULT_TOKEN=$(cat /tmp/vault-token)
 
 echo "✅ Vault Agent autenticato. Avvio playbook..."
+
+cd /app/playbooks
 ansible-playbook "$@"
