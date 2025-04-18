@@ -23,7 +23,11 @@ cache {
   use_auto_auth_token = true
 }
 
-# Dummy template richiesto per abilitare la cache
+listener "tcp" {
+  address = "127.0.0.1:8201"
+  tls_disable = true
+}
+
 template {
   destination = "/dev/null"
   contents    = ""
