@@ -30,5 +30,5 @@ listener "tcp" {
 
 template {
   destination = "/dev/null"
-  contents    = ""
+  contents    = "noop"
 }
