@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# Imposta valore di default per VAULT_ADDR se non definito
+if [ -z "$VAULT_ADDR" ]; then
+  export VAULT_ADDR="http://vault:8200"
+fi
+
 # Scrive i valori delle variabili passate via ENV in file
 echo "$VAULT_ROLE_ID" > /app/role_id
 echo "$VAULT_SECRET_ID" > /app/secret_id

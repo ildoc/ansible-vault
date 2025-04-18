@@ -1,5 +1,4 @@
 pid_file = "/tmp/vault-agent.pid"
-
 auto_auth {
   method "approle" {
     config = {
@@ -7,18 +6,15 @@ auto_auth {
       secret_id_file_path = "/app/secret_id"
     }
   }
-
   sink "file" {
     config = {
       path = "/tmp/vault-token"
     }
   }
 }
-
 vault {
-  address = "{{ env "VAULT_ADDR" | default "http://vault:8200" }}"
+  address = "${VAULT_ADDR}"
 }
-
 cache {
   use_auto_auth_token = true
 }
