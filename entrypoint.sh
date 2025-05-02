@@ -18,5 +18,10 @@ export VAULT_TOKEN=$(cat /tmp/vault-token)
 
 echo "✅ Vault Agent autenticato. Avvio playbook..."
 
+if [ "${DEBUG}" = "true" ]; then
+    echo "DEBUG è attivo. Eseguendo ls -la su /app/playbooks..."
+    ls -la /app/playbooks
+fi
+
 cd /app/playbooks
 ansible-playbook "$@"
