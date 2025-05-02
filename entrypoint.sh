@@ -18,7 +18,7 @@ export VAULT_TOKEN=$(cat /tmp/vault-token)
 
 echo "✅ Vault Agent autenticato. Avvio playbook..."
 
-mkdir /app/playbooks
+mkdir -p /app/playbooks
 
 if [ "${DEBUG}" = "true" ]; then
     echo "DEBUG è attivo. Eseguendo ls -la su /app/playbooks..."
