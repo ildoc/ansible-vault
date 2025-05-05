@@ -19,7 +19,6 @@ RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/sh
     kubectl \
     && apt-get clean
 
-# Installa Ansible
 RUN pip install --no-cache-dir \
     ansible \
     hvac \
@@ -30,7 +29,6 @@ RUN pip install --no-cache-dir \
     kubernetes.core \
     community.hashi_vault
 
-# Crea directory e copia entrypoint
 WORKDIR /app
 COPY entrypoint.sh vault-agent.hcl ./
 
