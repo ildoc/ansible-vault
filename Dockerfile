@@ -1,4 +1,4 @@
-FROM python:3.14.7-slim
+FROM python:3.15.1-slim
 
 # Stable OS packages — invalidate rarely
 RUN apt-get update \
