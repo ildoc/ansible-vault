@@ -30,9 +30,12 @@ authenticate_vault() {
     return
   fi
 
-  echo "[+] Authenticating via OIDC (open the URL in your browser)..."
-  echo "[+] Ensure port 8250 is published: -p 8250:8250"
-  local oidc_args=(-method=oidc)
+  echo "[+] Authenticating via OIDC..."
+  echo "[+] The callback is http://localhost:8250/oidc/callback — that must be THIS machine"
+  echo "[+]   (or an SSH tunnel from your laptop: ssh -L 8250:127.0.0.1:8250 user@server)."
+  echo "[+] Publish the port with: -p 127.0.0.1:8250:8250"
+  echo "[+] Prefer -e VAULT_TOKEN if the browser is on another host without a tunnel."
+  local oidc_args=(-method=oidc skip_browser=true)
   if [ -n "${VAULT_OIDC_ROLE:-}" ]; then
     oidc_args+=("role=${VAULT_OIDC_ROLE}")
   fi

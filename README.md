@@ -11,21 +11,33 @@ No secrets are baked into the image. Auth happens at runtime only.
 
 1. `VAULT_TOKEN` — use a short-lived token (e.g. after host-side OIDC login)
 2. AppRole — if both `VAULT_ROLE_ID` and `VAULT_SECRET_ID` are set
-3. OIDC — interactive browser login (default for local use)
+3. OIDC — interactive browser login (callback on `localhost:8250`)
 
-## OIDC (interactive)
+## OIDC on a remote server (browser on another PC)
 
-Requires `-it` and publishing the Vault CLI callback port (`8250`), already
-allowed on the Vault OIDC role (`http://localhost:8250/oidc/callback`).
+Vault CLI listens for the OIDC callback on `http://localhost:8250`. If Docker
+runs on a server and the browser is on your laptop, `localhost` is the laptop —
+the callback never reaches the container unless you tunnel the port.
+
+On the laptop:
+
+```bash
+ssh -L 8250:127.0.0.1:8250 user@ubuntu-server
+```
+
+On the server (keep the tunnel open):
 
 ```bash
 docker run --rm -it \
-  -p 8250:8250 \
+  -p 127.0.0.1:8250:8250 \
   -v "$(pwd)":/app/playbooks \
   -v ~/.kube:/root/.kube \
   registry.gitlab.local.ildoc.it/devops/ansible-vault:latest \
   mioplaybook.yml --ask-pass --ask-become-pass
 ```
+
+Open the printed Authentik URL in the laptop browser. After login, the redirect
+to `localhost:8250` goes through the SSH tunnel into the container.
 
 Optional role (Vault default is `dynamic`):
 
@@ -33,14 +45,15 @@ Optional role (Vault default is `dynamic`):
 -e VAULT_OIDC_ROLE=admin
 ```
 
-## Temporary token
+## Temporary token (no port 8250)
 
-Log in on the host first, then pass the token into the container (no port 8250):
+Best when you already have Vault CLI on a machine with a browser (or after a
+one-shot OIDC login elsewhere):
 
 ```bash
 export VAULT_ADDR=https://vault.local.ildoc.it
 vault login -method=oidc
-
+# copy the token, then on the server:
 docker run --rm -it \
   -e VAULT_TOKEN \
   -v "$(pwd)":/app/playbooks \
