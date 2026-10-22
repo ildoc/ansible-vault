@@ -3,6 +3,7 @@ stages:
 
 variables:
   IMAGE_NAME: $CI_REGISTRY_IMAGE
+  CACHE_REPO: $CI_REGISTRY_IMAGE/cache
   STORAGE_DRIVER: overlay
   BUILDAH_FORMAT: docker
   BUILDAH_ISOLATION: chroot
@@ -16,6 +17,9 @@ build-docker-image:
     - |
       buildah bud \
         --layers \
+        --cache-from "$CACHE_REPO" \
+        --cache-from "$IMAGE_NAME:latest" \
+        --cache-to "$CACHE_REPO" \
         --tag "$IMAGE_NAME:$CI_COMMIT_SHA" \
         --tag "$IMAGE_NAME:latest" \
         -f "$CI_PROJECT_DIR/Dockerfile" \
