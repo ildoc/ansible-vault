@@ -1,10 +1,12 @@
+exit_after_auth = true
 pid_file = "/tmp/vault-agent.pid"
 
 auto_auth {
   method "approle" {
     config = {
-      role_id_file_path   = "/app/role_id"
-      secret_id_file_path = "/app/secret_id"
+      role_id_file_path                   = "/app/role_id"
+      secret_id_file_path                 = "/app/secret_id"
+      remove_secret_id_file_after_reading = false
     }
   }
 
@@ -15,18 +17,8 @@ auto_auth {
   }
 }
 
-vault {
-  address = "${VAULT_ADDR}"
-}
-
-cache {
-  use_auto_auth_token = true
-}
-
-listener "tcp" {
-  address = "127.0.0.1:8201"
-  tls_disable = true
-}
+# Address comes from VAULT_ADDR or `vault agent -address`.
+# A ${VAULT_ADDR} string in this file is not expanded.
 
 template {
   destination = "/tmp/vault-agent-dummy.txt"

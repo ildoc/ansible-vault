@@ -64,14 +64,54 @@ docker run --rm -it \
 
 ## AppRole (automation / CI)
 
+`VAULT_ADDR` is optional; the default is `https://vault.local.ildoc.it`.
+Omitting the image tag selects `:latest`.
+
 ```bash
 docker run --rm -it \
   -e VAULT_ROLE_ID=<role_id> \
   -e VAULT_SECRET_ID=<secret_id> \
+  -e VAULT_ADDR=https://vault.local.ildoc.it \
   -v "$(pwd)":/app/playbooks \
   -v ~/.kube:/root/.kube \
-  registry.gitlab.local.ildoc.it/devops/ansible-vault:latest \
+  registry.gitlab.local.ildoc.it/devops/ansible-vault \
   mioplaybook.yml --ask-pass --ask-become-pass
+```
+
+## SSH keys
+
+The image includes `openssh-client` and `sshpass` and runs as root, so
+`--ask-pass` / `--ask-become-pass` need `-it`.
+
+To use your keys instead of `--ask-pass`, mount `~/.ssh` on `/root/.ssh`.
+OpenSSH rejects a config owned by the host user, so the entrypoint copies
+that directory into a private home (mode `0700`/`0600`) and uses it for SSH.
+`kubectl` keeps using `/root/.kube/config`.
+
+```bash
+docker run --rm -it \
+  -e VAULT_ROLE_ID=<role_id> \
+  -e VAULT_SECRET_ID=<secret_id> \
+  -e VAULT_ADDR=https://vault.local.ildoc.it \
+  -v "$(pwd)":/app/playbooks \
+  -v ~/.kube:/root/.kube \
+  -v ~/.ssh:/root/.ssh:ro \
+  registry.gitlab.local.ildoc.it/devops/ansible-vault \
+  mioplaybook.yml --ask-become-pass
+```
+
+`:ro` is enough. If the mount is read-write and `known_hosts` already exists,
+newly learned host keys are written back without changing the file owner.
+
+`IdentityFile` and `Include` paths must live under `~/.ssh`. An absolute host
+path such as `/home/you/.ssh/id_ed25519` is not inside the container.
+
+A key with a passphrase is not prompted by Ansible. Forward the agent socket
+instead:
+
+```bash
+  -v "$SSH_AUTH_SOCK:$SSH_AUTH_SOCK" \
+  -e SSH_AUTH_SOCK \
 ```
 
 ## Debug

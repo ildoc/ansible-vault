@@ -45,4 +45,4 @@ WORKDIR /app
 # App files last — most frequent changes must not bust apt/pip layers
 COPY entrypoint.sh vault-agent.hcl ./
 
-ENTRYPOINT ["bash", "entrypoint.sh"]
+ENTRYPOINT ["bash", "/app/entrypoint.sh"]
